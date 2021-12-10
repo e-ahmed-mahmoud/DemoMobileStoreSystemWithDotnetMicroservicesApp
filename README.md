@@ -41,5 +41,4 @@ stop any docker use ports of :  27017 , 15672 , 5672 , 6379 , 8000 , 8002, 8003 
 ![image](https://user-images.githubusercontent.com/46009744/145630233-511809e9-7eed-44e3-bf05-4c752024e525.png)
 ![image](https://user-images.githubusercontent.com/46009744/145630295-248366d3-4025-420f-94b9-d572ae3fd816.png)
 
-
-
+thanks to Mehmet Özkaya tutorials
