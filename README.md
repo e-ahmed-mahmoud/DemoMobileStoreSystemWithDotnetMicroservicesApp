@@ -2,7 +2,7 @@
 Demo Shop management system using Microservices with .Net5, DDD programming paradigms, Redis Db, Mongo Db, SQL Db, and services communicate through Docker container
 each services follow clean codes rules
 
-# Catalog service use Mongo Database, used for providing products detials
+# Catalog service use Mongo Database, use for providing products detials
   docker mapping ports into http://localhost:8000
 ![image](https://user-images.githubusercontent.com/46009744/145629812-5330e784-fbf7-4dba-94c7-677fb2d1fb87.png)
 
