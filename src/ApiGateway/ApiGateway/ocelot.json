@@ -1,0 +1,123 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/Values/{name}", //destination URL, if action define with [HttpGET("{para}")] then use, action/paramater in destination URL
+      "DownstreamScheme": "http", //used protocol in routing
+      "DownstreamHostAndPorts": [ //ports mapping prefer to use mapping ports into catalog.api
+        {
+          "Host": "localhost",
+          "Port": "7000"
+        }
+      ],
+
+      "UpstreamPathTemplate": "/Values/{name}", // source URL from browser define params as action/param
+      "UpstreamHttpMethod": [ "GET" ] //methods
+    },
+
+    //catalog Api microservice for api url as:=>  �/api/v1/catalog�
+    {
+      "DownstreamPathTemplate": "/api/v1/Catalog",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/Catalog",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ]
+    },
+    //catalog api url : "/api/v1/Catalog/{id:}"
+    {
+      "DownstreamPathTemplate": "/api/v1/Catalog/GetProductById/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/Catalog/{id}",
+      "UpstreamHttpMethod": [ "GET", "Delete" ]
+    },
+    //catalog api url : "/api/v1/Catalog/{name}"
+    {
+      "DownstreamPathTemplate": "/api/v1/Catalog/GetProductByName/{name}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/Catalog/GetProductByName/{name}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    //Catalog API Get: "/Catalog/GetProductByCatogery/{catogery}"
+    {
+      "DownstreamPathTemplate": "/api/v1/Catalog/GetProductByCatogery/{catogery}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/Catalog/GetProductByCatogery/{catogery}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+
+    //Basket service API URL /api/v1/basket :
+    {
+      "DownstreamPathTemplate": "/api/v1/Basket?userName={userName}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "basketapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/Basket/{userName}",
+      "UpstreamHttpMethod": [ "GET", "DELETE" ]
+    },
+    // Basket Delete url: "api/v1/basket/{userName}"
+    {
+      "DownstreamPathTemplate": "/api/v1/Basket/",
+      "DownstreanSchema": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "basketapi",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Basket",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    // Basket API Checkout action URL:  "api/v1/basket/checkout/"
+    {
+      "DownstreamPathTemplate": "/api/v1/Basket/Checkout",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "basketapi",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Basket/Checkout",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    //Order API URLS routing: /api/v1/ordering/GetOrderByUserName
+    {
+      "DownstreamPathTemplate": "/api/v1/Ordering?userName={userName}", //if destination define [HttpGET] without paramater then use string query params paramName?param
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ordering.api",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/Ordering/{userName}",
+      "UpstreamHttpMethod": [ "Get" ]
+    }
+  ]
+}

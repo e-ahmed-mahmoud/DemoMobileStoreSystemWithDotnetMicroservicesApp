@@ -1,0 +1,104 @@
+version: '3.4'
+
+services:
+  catalogMongoDbService:
+    container_name: catalogMongoContainer
+    restart: always
+    volumes:
+        - ${WEPAPP_STORAGE_HOME}/site:/data/db
+    ports:
+        - "27017:27017"
+  
+  rabbitMQService:    
+    container_name: rabbitMQContainer
+    restart: always
+    ports:
+        - 5672:5672
+        - 15672:15672
+
+
+  basketRedisDbService:
+    container_name: aspnetrun-redisDb
+    restart: always 
+    ports: 
+        - "6379:6379" 
+
+  orderSqlDbService:
+    container_name: orderSqlDbContainer
+    ports:
+        - "1433:1433"
+    environment:
+        SA_PASSWORD: "P@ssword123"
+        ACCEPT_EULA: "Y"
+
+
+  catalog.api:
+    container_name: catalogService.API
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - "CatalogDatabaseSettings:ConnectionString=mongodb://catalogMongoContainer:27017"
+    depends_on: 
+        - catalogMongoDbService
+    volumes:
+        - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+    ports: 
+        - "8000:80"
+
+  basketapi:
+    container_name: basketService.API
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:Redis=aspnetrun-redisDb:6379"
+      - "EventBus:HostName=rabbitMQContainer"
+    volumes:
+      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+    ports:
+      - "8001:80"
+    depends_on:
+      - basketRedisDbService
+      - rabbitMQService
+
+
+  ordering.api:
+    container_name: orderingService.API
+    restart: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:defaultConnection=Server=orderSqlDbContainer;database=OrderDb; User Id=sa; Password=P@ssword123;"
+      - "EventBus:HostName=rabbitMQContainer"
+    ports:
+      - "8002:80"
+    depends_on: 
+      - orderSqlDbService
+      - rabbitMQService
+
+
+
+  ocelotApiGateway:
+    container_name: apiGatewayContainer
+    depends_on:
+      - ordering.api
+      - basketapi
+      - catalog.api
+    volumes:
+      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "7000:80"
+
+
+  aspnetrunbasics:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "AppSettings:BaseAddress=ocelotApiGateway"
+    depends_on:
+      - ordering.api
+      - basketapi
+      - catalog.api
+      - ocelotApiGateway
+    ports:
+      - "8003:80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

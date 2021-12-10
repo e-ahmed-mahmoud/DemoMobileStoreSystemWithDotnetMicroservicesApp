@@ -1,0 +1,54 @@
+version: '3.4'
+
+services:
+
+  catalogMongoDbService:                     
+    image: mongo                  
+    
+  basketRedisDbService:
+    image: redis
+
+  rabbitMQService:
+    image: rabbitmq:3-management
+
+  orderSqlDbService:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    
+
+  catalog.api:
+    image: ${DOCKER_REGISTRY-}catalogapi
+    build:
+      context: .
+      dockerfile: src/catalog/Catalog.API/Dockerfile
+    depends_on: 
+      - catalogMongoDbService
+
+  basketapi:
+    image: ${DOCKER_REGISTRY-}basketapi
+    build:
+      context: .
+      dockerfile: src/Basket/BasketAPI/Dockerfile
+    depends_on:
+      - basketRedisDbService
+
+
+  ordering.api:
+    image: ${DOCKER_REGISTRY-}orderingapi
+    build:
+      context: .
+      dockerfile: src/Ordering/Ordering/Dockerfile
+
+
+  ocelotApiGateway:
+    image: ${DOCKER_REGISTRY-}apigateway
+    build:
+      context: .
+      dockerfile: src/ApiGateway/ApiGateway/Dockerfile
+
+
+  aspnetrunbasics:
+    image: ${DOCKER_REGISTRY-}aspnetrunbasics
+    build:
+      context: .
+      dockerfile: src/UI_Layer/Dockerfile
+
